@@ -1,2 +1,3 @@
 # troll-interconnector
-Mutually DoS trolls
+
+Mutually Assured DoStruction.
