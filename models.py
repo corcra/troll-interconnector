@@ -16,15 +16,15 @@ class Tweet(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     content = Column(Text)
-    author = Column(Integer, ForeignKey('author.id'))
+    author = Column(Integer, ForeignKey('twitteruser.id'))
     hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
 
-class Author(Base):
-    __tablename__ = 'authors'
+class TwitterUser(Base):
+    __tablename__ = 'twitter_users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    tweets = relationship("Tweet", backref="author")
+    tweets = relationship("Tweet", backref="twitter_user")
     troll_score = Column(Float)
 
 class Hashtag(Base):
@@ -33,3 +33,9 @@ class Hashtag(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
 
+class Mention(Base):
+    __tablename__ = 'mentions'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    tweet = Column(integer, ForeignKey('tweet.id'))
+    mentioned_user = Column(integer, ForeignKey('twitteruser.id'))
