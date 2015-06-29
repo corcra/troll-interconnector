@@ -1,10 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Float, String, Text, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
-
-# create our DB base
-Base = declarative_base()
-
+from troll_interconnector import Base
 
 tweets_hashtags_table = Table('association', Base.metadata,
                               Column('tweets_id', Integer, ForeignKey('tweets.id')),
@@ -37,5 +34,5 @@ class Mention(Base):
     __tablename__ = 'mentions'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tweet = Column(integer, ForeignKey('tweet.id'))
-    mentioned_user = Column(integer, ForeignKey('twitteruser.id'))
+    tweet = Column(Integer, ForeignKey('tweet.id'))
+    mentioned_user = Column(Integer, ForeignKey('twitteruser.id'))
