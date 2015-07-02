@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, Float, String, Text, ForeignKey, Table
+from sqlalchemy import Column, Integer, BigInteger, Float, String, Text, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
 from troll_interconnector import Base
 
@@ -11,10 +11,12 @@ tweets_hashtags_table = Table('association', Base.metadata,
 class Tweet(Base):
     __tablename__ = 'tweets'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True)
     content = Column(Text)
-    author = Column(Integer, ForeignKey('twitteruser.id'))
+    author = Column(BigInteger, ForeignKey('twitteruser.id'))
     hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
+    reply_to_id = Column(BigInteger)
+    reply_to_user_id = Column(BigInteger)
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
