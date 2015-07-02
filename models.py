@@ -17,11 +17,13 @@ class Tweet(Base):
     hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
     reply_to_id = Column(BigInteger)
     reply_to_user_id = Column(BigInteger)
+    reply_to_tweet = relationship("Tweet", backref="reply_to_tweet", null=True)
+    reply_to_user = relationship("User", backref="reply_to_user", null=True)
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, autoincrement=True)
     name = Column(String)
     tweets = relationship("Tweet", backref="twitter_user")
     troll_score = Column(Float)
