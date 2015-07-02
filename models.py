@@ -1,7 +1,9 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, BigInteger, Float, String, Text, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
-from troll_interconnector import Base
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 tweets_hashtags_table = Table('association', Base.metadata,
                               Column('tweets_id', Integer, ForeignKey('tweets.id')),
@@ -17,14 +19,13 @@ class Tweet(Base):
     hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
     reply_to_id = Column(BigInteger)
     reply_to_user_id = Column(BigInteger)
-    reply_to_tweet = relationship("Tweet", backref="reply_to_tweet", null=True)
-    reply_to_user = relationship("User", backref="reply_to_user", null=True)
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
 
-    id = Column(Integer, autoincrement=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String)
+    tweets_id = Column(BigInteger, ForeignKey('tweets.id'))
     tweets = relationship("Tweet", backref="twitter_user")
     troll_score = Column(Float)
 
