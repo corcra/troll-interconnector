@@ -1,25 +1,30 @@
 import unittest, sys, os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from database.models import *
+import database.models as models
 
 # tests for the scraper
 
+
+engine = create_engine('sqlite:///:memory:', echo=True)
+Session = sessionmaker(bind=engine)
+db_session = Session()
+Base = declarative_base()
+Base.metadata.create_all(bind=engine)
+    
+    
 class ScraperTests(unittest.TestCase):
     # set up the test database
-    @classmethod
-    def SetUpClass(cls):
-        engine = create_engine('sqlite:///:memory:', echo=True)
-        db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-        Base = declarative_base()
-        Base.query = db_session.query_property()
-        Base.metadata.create_all(bind=engine)
-        
+
     def test_db_connection(self):
         # make sure db works
-        test_tweet = TwitterUser(id="12345", name="test user")
-        db_session.add(test_tweet)
+        test_user = models.TwitterUser(id="12345", name="test user")
+        db_session.add(test_user)
         db_session.commit()
+        test_retrieve = db_session.query(models.TwitterUser).filter_by(
+            name="test user").first()
+        self.assertEqual("test user", test_retrieve.name)
+        
+if __name__ == '__main__':
+    unittest.main()
