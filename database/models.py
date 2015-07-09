@@ -15,7 +15,7 @@ class Tweet(Base):
 
     id = Column(BigInteger, primary_key=True)
     content = Column(Text)
-    author = Column(BigInteger, ForeignKey('twitteruser.id'))
+    author = relationship("TwitterUser", backref="author")
     hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
     reply_to_id = Column(BigInteger)
     reply_to_user_id = Column(BigInteger)
@@ -39,5 +39,5 @@ class Mention(Base):
     __tablename__ = 'mentions'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tweet = Column(Integer, ForeignKey('tweet.id'))
-    mentioned_user = Column(Integer, ForeignKey('twitteruser.id'))
+    tweet = Column(Integer, ForeignKey('tweets.id'))
+    mentioned_user = Column(Integer, ForeignKey('twitter_users.id'))

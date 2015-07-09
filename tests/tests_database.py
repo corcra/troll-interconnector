@@ -8,10 +8,10 @@ import database.models as models
 
 
 engine = create_engine('sqlite:///:memory:', echo=True)
+models.Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 db_session = Session()
-Base = declarative_base()
-Base.metadata.create_all(bind=engine)
+
     
     
 class ScraperTests(unittest.TestCase):
