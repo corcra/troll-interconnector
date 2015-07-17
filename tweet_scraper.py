@@ -34,7 +34,23 @@ class TweetScraper(object):
         results = self.api.search(q=query, lang="en")
         for result in results:
             # now let's break out the bits we're interested in
-        db.
+            # check if the tweet exists
+            tweet_result = db.session.query(models.Tweet).filter_by(
+                id_str=result.id_str).first()
+            if tweet_result:
+                # entry already exists, skip it
+                continue
+            else:
+                tweet_author = db.session.query(models.TwitterUser).get(
+                    result.user.id)
+                if not tweet_author:
+                    # new user previously unseen, add to db
+                    tweet_author = models.TwitterUser(id=result.user.id, 
+                        name=result.user.name)
+                    db.session.add(tweet_author)
+                tweet_result = models.Tweet(id_str=result.id_str, 
+                content=result.text, author=tweet_author.id)
+                db.session.commit()
             
 t_scraper = TweetScraper()
 t_scraper.search_tweets("mouse")
