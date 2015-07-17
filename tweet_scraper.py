@@ -1,4 +1,5 @@
-import database as db
+import database.db as db
+import database.models as models
 import tweepy
 from settings import *
 import urllib3
@@ -32,7 +33,8 @@ class TweetScraper(object):
         """ Will suck down and store results of a search in the db """
         results = self.api.search(q=query, lang="en")
         for result in results:
-            print type(results)
+            # now let's break out the bits we're interested in
+        db.
             
 t_scraper = TweetScraper()
 t_scraper.search_tweets("mouse")
