@@ -10,6 +10,7 @@ sys.path.append(secretsdir)
 from secret_stuff import *
 
 # TWITTER_CONSUMER_KEY and TWITTER_CONSUMER_SECRET are now defined
+DATABASE_NAME = "/home/ubuntu/workspace/troll_interconnector/test.db"
 
 
 

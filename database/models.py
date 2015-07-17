@@ -13,21 +13,21 @@ tweets_hashtags_table = Table('association', Base.metadata,
 class Tweet(Base):
     __tablename__ = 'tweets'
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True)
     id_str = Column(String, unique=True)
     content = Column(Text)
-    author = relationship("TwitterUser", backref="author")
-    hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, backref="tweets")
-    reply_to_id = Column(BigInteger)
-    reply_to_user_id = Column(BigInteger)
+    author_id = Column(BigInteger, ForeignKey('twitter_users.id'))
+    author = relationship("TwitterUser", backref="tweets")
+    # hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, 
+    #     backref="tweets")
+    reply_to_id = Column(BigInteger, nullable=True)
+    reply_to_user_id = Column(BigInteger, nullable=True)
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
 
     id = Column(BigInteger, primary_key=True)
     name = Column(String)
-    tweets_id = Column(BigInteger, ForeignKey('tweets.id'))
-    tweets = relationship("Tweet", backref="twitter_user")
     troll_score = Column(Float, default=0)
 
 class Hashtag(Base):
