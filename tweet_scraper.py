@@ -1,4 +1,4 @@
-from database import *
+import database as db
 import tweepy
 from settings import *
 import urllib3
@@ -8,18 +8,31 @@ urllib3.disable_warnings()
 #a Python version < 2.7.9
 
 
-def TweepyAuth(consumer_key, consumer_secret):
-    #only has to be run once, then you can just put the token in secret_data
+# inheriting from object is a kludge for 2.x, no longer needed in 3 if we
+# migrate to that.
+class TweetScraper(object):
     
-    t_auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
-    auth_url = t_auth.get_authorization_url()
-    print 'Please authorize: ' + auth_url
-    verifier = raw_input('PIN: ').strip()
-    t_auth.get_access_token(verifier)
-    print t_auth
+    def TweepyAuth(self, consumer_key, consumer_secret):
+        # only has to be run once then you can just put the token in secret_data
+        # would be best be broken out into some sort of utils library later
+        t_auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, 
+            TWITTER_CONSUMER_SECRET)
+        auth_url = t_auth.get_authorization_url()
+        print 'Please authorize: ' + auth_url
+        verifier = raw_input('PIN: ').strip()
+        t_auth.get_access_token(verifier)
+        return t_auth
 
-auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
-auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET)
-api = tweepy.API(auth)
-user = api.me()
-print user.name
+
+    auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
+    auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET)
+    api = tweepy.API(auth)
+    
+    def search_tweets(self, query):
+        """ Will suck down and store results of a search in the db """
+        results = self.api.search(q=query, lang="en")
+        for result in results:
+            print type(results)
+            
+t_scraper = TweetScraper()
+t_scraper.search_tweets("mouse")
