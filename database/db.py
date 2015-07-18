@@ -18,6 +18,5 @@ def init_db():
     models.Base.metadata.create_all(bind=engine)
     session.commit()
 
-# if not os.path.isfile(DATABASE_NAME):
-#     init_db()
+init_db()
 

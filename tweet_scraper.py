@@ -33,7 +33,6 @@ class TweetScraper(object):
         """ Will suck down and store results of a search in the db """
         results = self.api.search(q=query, lang="en")
         for result in results:
-            print result.id_str
             # now let's break out the bits we're interested in
             # check if the tweet exists
             tweet_result = db.session.query(models.Tweet).filter_by(
@@ -50,9 +49,19 @@ class TweetScraper(object):
                         name=result.user.name)
                     db.session.add(tweet_author)
                 tweet_result = models.Tweet(id_str=result.id_str, 
-                content=result.text, author=tweet_author)
-                print tweet_result.id_str
+                    content=result.text, author=tweet_author)
+                if result.in_reply_to_status_id_str:
+                    # if it's a reply, we want to know what tweet it's replying 
+                    # to
+                    tweet_result.reply_to_tweet_id_str = \
+                        result.in_reply_to_status_id_str
+                if result.in_reply_to_user_id_str:
+                    tweet_result.reply_to_user_id_str = \
+                        result.in_reply_to_user_id_str
+                    
+                
+                
             db.session.commit()
             
 t_scraper = TweetScraper()
-t_scraper.search_tweets("mouse")
+t_scraper.search_tweets("gamergate")

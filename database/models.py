@@ -20,8 +20,8 @@ class Tweet(Base):
     author = relationship("TwitterUser", backref="tweets")
     # hashtags = relationship("Hashtag", secondary=tweets_hashtags_table, 
     #     backref="tweets")
-    reply_to_id = Column(BigInteger, nullable=True)
-    reply_to_user_id = Column(BigInteger, nullable=True)
+    reply_to_tweet_id_str = Column(String, nullable=True)
+    reply_to_user_id_str = Column(String, nullable=True)
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
