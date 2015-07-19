@@ -40,28 +40,41 @@ class TweetScraper(object):
             if tweet_result:
                 # entry already exists, skip it
                 continue
-            else:
-                tweet_author = db.session.query(models.TwitterUser).get(
-                    result.user.id)
-                if not tweet_author:
-                    # new user previously unseen, add to db
-                    tweet_author = models.TwitterUser(id=result.user.id, 
-                        name=result.user.name)
-                    db.session.add(tweet_author)
-                tweet_result = models.Tweet(id_str=result.id_str, 
-                    content=result.text, author=tweet_author)
-                if result.in_reply_to_status_id_str:
-                    # if it's a reply, we want to know what tweet it's replying 
-                    # to
-                    tweet_result.reply_to_tweet_id_str = \
-                        result.in_reply_to_status_id_str
-                if result.in_reply_to_user_id_str:
-                    tweet_result.reply_to_user_id_str = \
-                        result.in_reply_to_user_id_str
+            tweet_author = db.session.query(models.TwitterUser).get(
+                result.user.id)
+            if not tweet_author:
+                # new user previously unseen, add to db
+                tweet_author = models.TwitterUser(id=result.user.id, 
+                    name=result.user.screen_name)
+                db.session.add(tweet_author)
+            tweet_result = models.Tweet(id_str=result.id_str, 
+                content=result.text, author=tweet_author)
+            if result.in_reply_to_status_id_str:
+                # if it's a reply, we want to know what tweet it's replying 
+                # to
+                tweet_result.reply_to_tweet_id_str = \
+                    result.in_reply_to_status_id_str
+            if result.in_reply_to_user_id_str:
+                tweet_result.reply_to_user_id_str = \
+                    result.in_reply_to_user_id_str
+            # if any users are mentioned, probably interesting- let's get 'em
+            if "id" in result.entities["user_mentions"]:
+                for mentioned_user in result.entities["user_mentions"]:
+                    mentioned_author = db.session.query(
+                        models.TwitterUser).get(
+                            mentioned_user["id"])
+                    if not mentioned_author:
+                        mentioned_author = models.TwitterUser(
+                            id=mentioned_user["id"],
+                            name=mentioned_user["screen_name"])
+                    db.session.add(mentioned_author)
                     
                 
+                # start all the hashtag stuff here
                 
+            db.session.add(tweet_result)
+            # commit it all to the db
             db.session.commit()
             
 t_scraper = TweetScraper()
-t_scraper.search_tweets("gamergate")
+t_scraper.search_tweets("obama")
