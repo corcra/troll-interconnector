@@ -73,14 +73,13 @@ class TweetScraper(object):
         for t in result.entities["hashtags"]: list_of_hashtags.append(t["text"])
         set_of_hashtags = set(list_of_hashtags)
         for tag in set_of_hashtags:
-            if tag is not None and tag.lower() is not "None":
-                new_hashtag = db.session.query(models.Hashtag).get(tag.lower())
-                if not models.Hashtag(text=tag.lower()):
-                    new_hashtag = models.Hashtag(text=tag.lower())
-                    if new_hashtag is not None:
-                        print new_hashtag
-                        db.session.add(new_hashtag)
-                        tweet_result.hashtags.append(new_hashtag)
+            print tag
+            new_hashtag = db.session.query(models.Hashtag).get(tag.lower())
+            if not new_hashtag:
+                new_hashtag = models.Hashtag(text=tag.lower())
+            print new_hashtag.text
+            db.session.add(new_hashtag)
+            tweet_result.hashtags.append(new_hashtag)
         db.session.add(tweet_result)
         # commit it all to the db
         db.session.commit()
@@ -100,8 +99,4 @@ class TweetScraper(object):
                 self.extract_tweet(result)
             
 t_scraper = TweetScraper()
-t_scraper.search_tweets("obama")
-
-tweets = db.session.query(models.Tweet).all()
-for i in tweets:
-    print i.text
+# t_scraper.search_tweets("obama")
