@@ -54,25 +54,33 @@ class TweetScraper(object):
             tweet_result.reply_to_user_id_str = \
                 result.in_reply_to_user_id_str
         # if any users are mentioned, probably interesting- let's get 'em
-        if "id" in result.entities["user_mentions"]:
-            for mentioned_user in result.entities["user_mentions"]:
-                mentioned_author = db.session.query(
-                    models.TwitterUser).get(
-                        mentioned_user["id"])
-                if not mentioned_author:
-                    mentioned_author = models.TwitterUser(
-                        id=mentioned_user["id"],
-                        name=mentioned_user["screen_name"])
-                db.session.add(mentioned_author)
-                new_mention = mentioned_user(tweet_id=result.id_str, 
-                    mentioned_user_id=mentioned_user["id"])
-                    
+        for mentioned_user in result.entities["user_mentions"]:
+            mentioned_author = db.session.query(
+                models.TwitterUser).get(
+                    mentioned_user["id"])
+            if not mentioned_author:
+                mentioned_author = models.TwitterUser(
+                    id_str=mentioned_user["id_str"],
+                    name=mentioned_user["screen_name"])
+            db.session.add(mentioned_author)
+            new_mention = models.Mention(tweet_id=result.id_str, 
+                mentioned_user_id=mentioned_user["id"])
+            db.session.add(new_mention)
                 
-                # get those hashtags in
-        if "text" in result.entities["hashtags"]:
-            for tag in result.entities["hashtags"]:
-                tweet_result.hashtags.append = tag["text"].lower()
-                
+                # get those hashtags in. dedupe them in case people are dumb
+                # and use the same hashtag over again
+        list_of_hashtags = []
+        for t in result.entities["hashtags"]: list_of_hashtags.append(t["text"])
+        set_of_hashtags = set(list_of_hashtags)
+        for tag in set_of_hashtags:
+            if tag is not None and tag.lower() is not "None":
+                new_hashtag = db.session.query(models.Hashtag).get(tag.lower())
+                if not models.Hashtag(text=tag.lower()):
+                    new_hashtag = models.Hashtag(text=tag.lower())
+                    if new_hashtag is not None:
+                        print new_hashtag
+                        db.session.add(new_hashtag)
+                        tweet_result.hashtags.append(new_hashtag)
         db.session.add(tweet_result)
         # commit it all to the db
         db.session.commit()
@@ -80,7 +88,7 @@ class TweetScraper(object):
     
     def search_tweets(self, query):
         """ Will suck down and store results of a search in the db """
-        results = self.api.search(q=query, lang="en")
+        results = self.api.search(q=query, lang="en", rpp=100)
         for result in results:
             # now let's break out the bits we're interested in
             # check if the tweet exists
@@ -89,8 +97,11 @@ class TweetScraper(object):
                 # entry already exists, skip it
                 continue
             else:
-                print "test"
                 self.extract_tweet(result)
             
 t_scraper = TweetScraper()
-t_scraper.search_tweets("Jade Helm 15")
+t_scraper.search_tweets("obama")
+
+tweets = db.session.query(models.Tweet).all()
+for i in tweets:
+    print i.text
