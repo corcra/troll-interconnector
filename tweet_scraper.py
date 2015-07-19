@@ -37,10 +37,10 @@ class TweetScraper(object):
         else:
             result = tweet
         tweet_author = db.session.query(models.TwitterUser).get(
-            result.user.id)
+            result.user.id_str)
         if not tweet_author:
             # new user previously unseen, add to db
-            tweet_author = models.TwitterUser(id=result.user.id, 
+            tweet_author = models.TwitterUser(id_str=result.user.id_str, 
                 name=result.user.screen_name)
             db.session.add(tweet_author)
         tweet_result = models.Tweet(id_str=result.id_str, 
@@ -64,9 +64,14 @@ class TweetScraper(object):
                         id=mentioned_user["id"],
                         name=mentioned_user["screen_name"])
                 db.session.add(mentioned_author)
+                new_mention = mentioned_user(tweet_id=result.id_str, 
+                    mentioned_user_id=mentioned_user["id"])
                     
                 
-                # start all the hashtag stuff here
+                # get those hashtags in
+        if "text" in result.entities["hashtags"]:
+            for tag in result.entities["hashtags"]:
+                tweet_result.hashtags.append = tag["text"].lower()
                 
         db.session.add(tweet_result)
         # commit it all to the db
@@ -79,8 +84,7 @@ class TweetScraper(object):
         for result in results:
             # now let's break out the bits we're interested in
             # check if the tweet exists
-            tweet_result = db.session.query(models.Tweet).filter_by(
-                id_str=result.id_str).first()
+            tweet_result = db.session.query(models.Tweet).get(result.id_str)
             if tweet_result:
                 # entry already exists, skip it
                 continue
