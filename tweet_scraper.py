@@ -76,7 +76,7 @@ class TweetScraper(object):
             new_hashtag = db.session.query(models.Hashtag).get(tag.lower())
             if not new_hashtag:
                 new_hashtag = models.Hashtag(text=tag.lower())
-            db.session.add(new_hashtag)
+                db.session.add(new_hashtag)
             tweet_result.hashtags.append(new_hashtag)
         db.session.add(tweet_result)
         # commit it all to the db

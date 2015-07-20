@@ -3,6 +3,7 @@
 
 import madbot
 import tweepy
+import tweet_scraper
 from credz import consumer_key, consumer_secret, access_token, access_token_secret
 
 # --- get set up with the twitters --- #
