@@ -3,6 +3,7 @@ import database.models as models
 import tweepy
 from settings import *
 import urllib3
+from sqlalchemy.exc import IntegrityError
 urllib3.disable_warnings()
 
 #disable warnings in case somebody (like me) is running 
@@ -42,9 +43,9 @@ class TweetScraper(object):
             # new user previously unseen, add to db
             tweet_author = models.TwitterUser(id_str=result.user.id_str, 
                 name=result.user.screen_name)
-            db.session.add(tweet_author)
-        tweet_result = models.Tweet(id_str=result.id_str, 
-            content=result.text, author=tweet_author)
+        db.session.add(tweet_author)
+        tweet_result = db.get_or_create(db.session, models.Tweet, 
+            id_str=result.id_str)
         if result.in_reply_to_status_id_str:
             # if it's a reply, we want to know what tweet it's replying 
             # to
@@ -97,4 +98,6 @@ class TweetScraper(object):
                 self.extract_tweet(result)
             
 t_scraper = TweetScraper()
-t_scraper.search_tweets("Jade Helm 15")
+#t_scraper.search_tweets("Jade Helm 15")
+print db.session.query(models.Tweet).first().id_str
+t_scraper.extract_tweet("623020569349349376")
