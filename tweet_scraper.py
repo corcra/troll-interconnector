@@ -10,8 +10,6 @@ urllib3.disable_warnings()
 #a Python version < 2.7.9
 
 
-# inheriting from object is a kludge for 2.x, no longer needed in 3 if we
-# migrate to that.
 class TweetScraper(object):
     
     auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
@@ -46,6 +44,8 @@ class TweetScraper(object):
         db.session.add(tweet_author)
         tweet_result = db.get_or_create(db.session, models.Tweet, 
             id_str=result.id_str)
+        tweet_result.content = result.text
+        tweet_result.author = tweet_author
         if result.in_reply_to_status_id_str:
             # if it's a reply, we want to know what tweet it's replying 
             # to
@@ -86,18 +86,20 @@ class TweetScraper(object):
     
     def search_tweets(self, query):
         """ Will suck down and store results of a search in the db """
-        results = self.api.search(q=query, lang="en", rpp=100)
-        for result in results:
-            # now let's break out the bits we're interested in
-            # check if the tweet exists
-            tweet_result = db.session.query(models.Tweet).get(result.id_str)
-            if tweet_result:
-                # entry already exists, skip it
-                continue
-            else:
-                self.extract_tweet(result)
+        try:
+            for result in tweepy.Cursor(
+                    self.api.search, q=query, lang="en", rpp=100).items():
+                # now let's break out the bits we're interested in
+                # check if the tweet exists
+                tweet_result = db.session.query(models.Tweet).get(result.id_str)
+                if tweet_result:
+                    # entry already exists, skip it
+                    continue
+                else:
+                    self.extract_tweet(result)
+        except tweepy.error.TweepError:
+            #hit the rate limit, wait a bit
+            return self.api.rate_limit_status()['resources']['search']['reset']
             
 t_scraper = TweetScraper()
 #t_scraper.search_tweets("Jade Helm 15")
-print db.session.query(models.Tweet).first().id_str
-t_scraper.extract_tweet("623020569349349376")
