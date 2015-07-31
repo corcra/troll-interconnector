@@ -33,7 +33,7 @@ targets = madbot.find_trolls(selector)
 target, match = madbot.pair_trolls(targets)
 
 # --- now manage the mischief --- #
-tweet = madbot.form_connection(match, target, selector)
+tweet = madbot.form_connection(target, match, selector)
 # ... and then you send the tweet, somehow (API-implementation specific)
 #
 
