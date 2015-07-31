@@ -1,6 +1,17 @@
 #!/bin/python
 # madbot functions, in pseudo pseudocode form (for now)
 
+import numpy as np
+
+def get_insult_score(tweet):
+    """
+    Outputs probability that a given tweet is insulting.
+    We're going to steal amueller's model for this, I think.
+    """
+    # eyo
+    score = np.random.random()
+    return score
+
 def get_argument_score(user1, user2):
     """
     Considers two twitter users and calculates some proxy of 
