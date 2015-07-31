@@ -23,6 +23,10 @@ class tweep(object):
     def calculate_troll_score(self):
         """
         define a 'troll probability' (in [0, 1])
+        Some ideas for features:
+            - % of tweets that are insulting
+            - % of tweets that are @-replies
+            - ???
         """
         # magic machine learning goes here
         # so spooky and magical
