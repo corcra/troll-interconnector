@@ -1,6 +1,25 @@
 #!/bin/python
 # madbot functions, in pseudo pseudocode form (for now)
 
+def get_argument_score(user1, user2):
+    """
+    Considers two twitter users and calculates some proxy of 
+        'probability of argument' between them.
+    Score is either in [0, 1] or {0, 1} (undecided)
+    """
+    # this is likely going to be a binary classifier 
+    # or logistic regression model
+    #
+    # required:
+    #   features (notably, numerical representation of such)
+    #   pretrained model
+    #
+    # pretrained model requires:
+    #   features
+    #   training data!
+    score = 0.5
+    return score
+
 def get_target(selector):
     """
     Identify a target to neutralise.
