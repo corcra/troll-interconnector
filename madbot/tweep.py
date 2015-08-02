@@ -5,17 +5,21 @@
 
 
 import numpy as np
-
+import database.db as db
+import database.models as models
 class tweep(object):
     """
     oh god
     """
-    def __init__(self, params):
+    def __init__(self, tweep_author):
         """
         wat
         """
         # need interaction with the database here
-        tweets = ['placeholder', 'placeholder']
+        # for now just grabs tweets from db- tomorrow will make sure it fetches
+        # any tweets that don't exist in db
+        tweets = db.session.query(models.Tweets).filter(author=tweep_author)
+        # not saving followers in the db, will add that tomorrow as well
         followers = ['placeholder', 'placeholder']
         self.tweets = tweets
         self.followers = followers
