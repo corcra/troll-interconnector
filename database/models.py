@@ -10,10 +10,10 @@ tweets_hashtags_table = Table('association', Base.metadata,
                               Column('hashtags_text', String, ForeignKey('hashtags.text'))
                               )
     
-    followers_table = Table('followers', Base.metadata,
-    Column('t_users_id', String, ForeignKey('twitter_users.id_str')),
-    Column('t_users_id.b', String, ForeignKey('twitter_users.id_str'))
-    )
+followers_table = Table('followers_table', Base.metadata,
+            Column('t_users_id', String, ForeignKey('twitter_users.id_str')),
+            Column('f_users_id', String, ForeignKey('twitter_users.id_str'))
+            )
                               
 
 class Tweet(Base):
@@ -34,8 +34,12 @@ class TwitterUser(Base):
     id_str = Column(String, primary_key=True)
     name = Column(String)
     troll_score = Column(Float, default=0)
-    followers = 
-
+    followers = relationship("TwitterUser",
+                        secondary=followers_table,
+                        primaryjoin="TwitterUser.id_str==followers_table.c.t_users_id",
+                        secondaryjoin="TwitterUser.id_str==followers_table.c.f_users_id",
+                        backref="parents"
+                        )
 class Hashtag(Base):
     __tablename__ = 'hashtags'
 

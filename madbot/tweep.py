@@ -20,7 +20,7 @@ class tweep(object):
         # any tweets that don't exist in db
         tweets = db.session.query(models.Tweets).filter(author=tweep_author)
         # not saving followers in the db, will add that tomorrow as well
-        followers = ['placeholder', 'placeholder']
+        followers = db.session.query(models.TwitterUser).get(author.id_str).followers
         self.tweets = tweets
         self.followers = followers
         # and so on and so forth
