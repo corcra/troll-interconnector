@@ -32,9 +32,10 @@ class tweep(object):
             - % of tweets that are @-replies
             - ???
         """
-        # magic machine learning goes here
-        # so spooky and magical
-        score = np.random.random()
+        # what fraction of tweets are insulting?
+        # note: assumes self.tweets returns a LIST OF TWEETS AS STRINGS
+        insult_fraction = np.mean(madbot.classify_insulting(self.tweets))
+        score = madbot.troll_classifier([insult_fraction])
         self.score = score
         return True
     def calculate_ideology(self):
