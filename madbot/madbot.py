@@ -93,13 +93,21 @@ def get_match(target, selector):
     match_username = '@TrumpAsAnime'
     return match_username
 
-def form_connection(target, match, selector):
+def form_connection(target, match, selector, weblink='http://'):
     """
     Construct the perfect tweet to spark troll romance.
     """
-    # ??? ???
-    tweet = 'lol ur an idiot ' + target + ', read what ' +  match
-    tweet += ' said about ' + selector
+    # Two options here, we can either link users without tagging specific tweets
+    # Or we can find a specific tweet to base the linkage on.
+    # My current strategy is that the bot will masquerade as a 'factual accuracy' bot
+    # Who links users making mistakes to users who are knowledgeable about the subject.
+    # Ideally it won't say who is making the mistake and who is knowledgeable, so that
+    # both the trolls think they are knowledgeable and shout at each other.
+    # However, this strategy would prevent us choosing a specific anchor tweet, as this
+    # would make it obvious who we thought the incorrect user was.
+    # Ideally the bot would have a weblink we could send people to that would explain
+    # its 'purpose'.
+    tweet = "Hi, {user1} and {user2}! We think you'd benefit from talking to each other, see {weblink} for info.".format(user1=target,user2=match,weblink=weblink)
     # ??? ???
     assert len(tweet)<=140
     return tweet
