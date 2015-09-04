@@ -3,9 +3,9 @@
 
 import numpy as np
 
-def is_insulting(tweet):
+def classify_insulting(tweets):
     """
-    Outputs probability that a given tweet is insulting.
+    Outputs whether a list of tweets is insulting.
     Using amueller's model.
     Test:
     >>> is_insulting('fuck you')
@@ -15,8 +15,8 @@ def is_insulting(tweet):
     """
     cv = np.load('./ML/insult_cv.npy').item()
     svm = np.load('./ML/insult_svm.npy').item()
-    tweet_transformed = cv.transform([tweet])
-    score = svm.predict(tweet_transformed)[0]
+    tweets_transformed = cv.transform(tweets)
+    score = svm.predict(tweets_transformed)
     return score
 
 def get_argument_score(user1, user2):
