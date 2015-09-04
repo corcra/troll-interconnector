@@ -19,6 +19,14 @@ def classify_insulting(tweets):
     score = svm.predict(tweets_transformed)
     return score
 
+def troll_classifier(features):
+    """
+    Outputs a troll score based on a set of features.
+    """
+    # lol
+    score = np.sum(features)
+    return score
+
 def get_argument_score(user1, user2):
     """
     Considers two twitter users and calculates some proxy of 
